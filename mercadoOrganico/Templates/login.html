@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrarse</title>
+    <script src = "//code.jquery.com/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+<form method="post" id="formSignUp" action="http://localhost:8000/gallery/add/addImage" enctype="multipart/form-data">
+    <input id="username" name="username" type="text" placeholder="Nombre de usuario" /><br />
+    <input id="password" name="password" type="password" placeholder="Contraseña" /><br />
+    <input id="first_name" name="first_name" type="text" placeholder="Nombre" /><br />
+    <input id="last_name" name="last_name" type="text" placeholder="Apellido" /><br />
+    <input id="email" name="email" type="email" placeholder="Correo Electrónico" /><br />
+    <input id="phone" name="phone" type="tel" placeholder="Celular" /><br />
+    <input id="send" name="send" type="submit" value="Sign Up" />
+    <a href="http://localhost:8000/login">Cancelar</a>
+</form>
+<script>
+    $('form').submit(function(e)
+    {
+        var formData = new FormData($('#formSignUp')[0]);
+        $.ajax(
+        {
+            url: $(this).attr('action'),
+            type: $(this).attr('method'),
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function()
+            {
+                window.location = "http://localhost:8000/";
+            },
+        });
+        e.preventDefault();
+    });
+</script>
+</body>
+</html>
