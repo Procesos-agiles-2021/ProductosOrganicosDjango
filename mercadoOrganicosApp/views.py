@@ -132,6 +132,10 @@ def itemcarrito_list_create(request, userPk):
                 itemCompraNuevo.save()
                 return Response(status=status.HTTP_200_OK)
             else:
+                item = itemCompraCarrito.first()
+                cant = int(cantidad) + item.cantidad
+                itemCompraCarrito.update(cantidad=cant)
+                return Response(status=status.HTTP_200_OK)
                 return Response(status=status.HTTP_400_BAD_REQUEST)
     except Carrito.DoesNotExist:
         return Response(status=status.HTTP_400_BAD_REQUEST)
