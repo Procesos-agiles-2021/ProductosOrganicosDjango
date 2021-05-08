@@ -148,3 +148,9 @@ class RegisterClientSerializer(ModelSerializer):
         user.save()
 
         return user
+
+
+class ItemCompraSerializer1(ModelSerializer):
+    class Meta:
+        model = ItemCompra
+        fields = ('id', 'imagenUrl', 'visibilidad')
