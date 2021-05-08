@@ -1,0 +1,7 @@
+Población:
+insert into public."auth_user" values(1, '123', '1/03/2021', 'true', 'AdminOG', 'Admin', 'OG', 'email', 'false', 'false', '1/03/2021');
+insert into public."mercadoOrganicosApp_catalogo" values (1, '2021-03-24', 1);
+insert into public."mercadoOrganicosApp_itemcompra" values (1, 'https://noticiasya.com/wp-content/uploads/sites/3/2019/12/adobestock_174938002.jpeg?resize=1536,901', true, 1);
+insert into public."mercadoOrganicosApp_producto" values (1, 'Banano', 2000, 1);
+insert into public."mercadoOrganicosApp_itemcompra" values (2, 'https://sc04.alicdn.com/kf/Uab9e5ed71d6c42578a42cf1ea5af7d7bm.jpg', true, 1);
+insert into public."mercadoOrganicosApp_producto" values (2, 'Manzana', 3200, 1);
