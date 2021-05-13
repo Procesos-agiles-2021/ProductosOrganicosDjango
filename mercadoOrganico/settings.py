@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'mercadoOrganicosApp',
     'rest_framework',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
+    'django_nose',
 ]
 
 REST_FRAMEWORK = {
@@ -95,11 +96,11 @@ WSGI_APPLICATION = 'mercadoOrganico.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'mercadoOrganico',
-        'USER': 'taniadiaz',
-        'PASSWORD': '',
+        'NAME': 'PrjPrcAglUniandes',
+        'USER': 'postgres',
+        'PASSWORD': 'test',
         'HOST': 'localhost',
-        'PORT': '5432',
+        'PORT': '',
     }
 }
 
@@ -153,3 +154,13 @@ STATICFILES_DIRS = (
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 django_heroku.settings(locals())
+
+
+#TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+NOSE_ARGS = [
+    '--with-coverage',
+    '--cover-erase',
+    '--cover-inclusive',
+    '--cover-package=mercadoOrganicosApp',
+]
