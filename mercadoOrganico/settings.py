@@ -52,6 +52,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',  # <-- And here
     ],
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
 
 MIDDLEWARE = [
@@ -94,11 +95,11 @@ WSGI_APPLICATION = 'mercadoOrganico.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'ProductosOrganicos',
-        'USER': 'jdruedaa',
-        'PASSWORD': 'Abc123#',
+        'NAME': 'mercadoOrganico',
+        'USER': 'taniadiaz',
+        'PASSWORD': '',
         'HOST': 'localhost',
-        'PORT': '',
+        'PORT': '5432',
     }
 }
 
