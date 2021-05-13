@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from .views import *
 from django.conf.urls import url
+from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
 
 urlpatterns = [
     path('', redirect_to_home, name="Home"),
@@ -35,4 +36,8 @@ urlpatterns = [
     path('carrito/<int:userPk>', carrito_list_create, name='carrito_list_create'),
     path('itemcarrito/<int:userPk>', itemcarrito_list_create, name='itemcarrito_list_create'),
     path('itemcarrito/<int:userPk>/itemcompra/<int:itemPk>', itemcarrito_update_delete, name='itemcarrito_update_delete'),
+    path('itemcarritocompra/', itemCarCompraAPI, name='item_carrito_compra'),
+    path(r'api-token-auth/', obtain_jwt_token),
+    path(r'api-token-refresh/', refresh_jwt_token),
+    path('getuserlogin/', getuserlogin, name='get_user_login'),
 ]
