@@ -75,9 +75,11 @@ class ItemCompraSerializer(ModelSerializer):
 
 
 class ItemCompraCarritoSerializer(ModelSerializer):
+    imagenUrl = serializers.CharField(source='item_compra.imagenUrl')
+
     class Meta:
         model = ItemCompraCarrito
-        fields = ('item_compra_id', 'cantidad')
+        fields = ('item_compra_id', 'cantidad', 'imagenUrl')
 
 
 class CarritoDisplaySerializer(serializers.ModelSerializer):
