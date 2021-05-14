@@ -6,7 +6,6 @@ from django.urls import reverse
 from django.utils.http import urlencode
 from rest_framework import status
 from rest_framework.test import APITestCase
-from model_mommy import mommy
 
 # Create your tests here.
 

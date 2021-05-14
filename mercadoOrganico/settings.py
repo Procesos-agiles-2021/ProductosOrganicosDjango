@@ -96,11 +96,11 @@ WSGI_APPLICATION = 'mercadoOrganico.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'PrjPrcAglUniandes',
-        'USER': 'postgres',
-        'PASSWORD': 'test',
+        'NAME': 'mercadoOrganico',
+        'USER': 'taniadiaz',
+        'PASSWORD': '',
         'HOST': 'localhost',
-        'PORT': '',
+        'PORT': '5432',
     }
 }
 
