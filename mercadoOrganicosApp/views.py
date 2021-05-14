@@ -30,7 +30,7 @@ def signin(request):
 @api_view(["POST"])
 def signout(request):
     do_signout(request, user=request.user)
-    return redirect('/')
+    return Response(status=status.HTTP_200_OK)
 
 
 @csrf_exempt
