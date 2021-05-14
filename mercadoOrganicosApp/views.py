@@ -1,11 +1,9 @@
 from django.http import HttpResponse
-from django.http.response import JsonResponse
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view
-from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework import status, generics, serializers
 from .logic import signin as do_signup, signout as do_signout
@@ -27,14 +25,6 @@ def signin(request):
         }, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_403_FORBIDDEN)
-
-@csrf_exempt
-def getuserlogin(request):
-   if request.method == 'GET':
-          username=request.user.username
-          userid=request.user.id
-          print (username)
-          return JsonResponse(username, safe=False)
 
 
 @api_view(["POST"])
@@ -186,6 +176,13 @@ def producto_get(request, catPk, itemPk):
         return Response(serializer.data)
 
 
+@api_view(["GET"])
+def productoCarrito_get(request, itemPk):
+    if request.method == 'GET':
+        producto = Producto.objects.filter(itemId=itemPk)
+        serializer = ProductoSerializer(producto, many=True)
+        return Response(serializer.data)
+
 
 @api_view(["GET"])
 def items_get(request, catPk):
@@ -199,30 +196,3 @@ class RegisterClientView(generics.CreateAPIView):
     queryset = User.objects.all()
     permission_classes = (AllowAny,)
     serializer_class = RegisterClientSerializer
-
-
-@csrf_exempt
-def itemCarCompraAPI(request, id=0):
-    if request.method == 'GET':
-        item = ItemCompraCarrito.objects.all()
-        serializer = ItemCompraCarritoSerializer(item, many=True)
-        return JsonResponse(serializer.data, safe=False)
-    elif request.method == 'POST':
-        item_carrito_compra_data = JSONParser().parse(request)
-        serializer = ItemCompraCarritoSerializer(data=item_carrito_compra_data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse("se agrego satisfactoriamiente", safe=False)
-        return JsonResponse("Failed", safe=False)
-    elif request.method == 'PUT':
-        item_carrito_compra_data = JSONParser().parse(request)
-        item_carrito_compra=ItemCompraCarrito.objects.get(Id=item_carrito_compra_data['ItemCarritoCompraID'])
-        serializer = ItemCompraCarritoSerializer(item_carrito_compra, data=item_carrito_compra_data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse("update success", safe=False)
-        return JsonResponse("failed to update", safe=False)
-    elif request.method == 'DELETE':
-        item_carrito_compra=ItemCompraCarrito.objects.get(ItemCompraCarritoId=id)
-        item_carrito_compra.delete()
-        return JsonResponse("Delete successfull", safe=False)

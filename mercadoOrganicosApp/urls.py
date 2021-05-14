@@ -1,5 +1,4 @@
 """mercadoOrganico URL Configuration
-
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.1/topics/http/urls/
 Examples:
@@ -17,7 +16,6 @@ from django.contrib import admin
 from django.urls import path
 from .views import *
 from django.conf.urls import url
-from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
 
 urlpatterns = [
     path('', redirect_to_home, name="Home"),
@@ -29,6 +27,7 @@ urlpatterns = [
     path('catalogo/', catalogos_list_post, name='catalogos_list_post'),
     path('catalogo/<int:catPk>/itemproducto/<int:itemPk>', producto_get, name='producto_get_by_itemId'),
     path('catalogo/<int:catPk>/items', items_get, name='items_get_by_catalogoId'),
+    path('itemproducto/<int:itemPk>', productoCarrito_get, name='productoCarrito_get_by_itemId'),
     # path('user/<int:userPk>/catalogo/', catalogos_list_post, name='Catalogos'),
     path('user/<int:userPk>/catalogo/<int:pk>',
          catalogos_update_delete, name='catalogos_update_delete'),
@@ -36,8 +35,4 @@ urlpatterns = [
     path('carrito/<int:userPk>', carrito_list_create, name='carrito_list_create'),
     path('itemcarrito/<int:userPk>', itemcarrito_list_create, name='itemcarrito_list_create'),
     path('itemcarrito/<int:userPk>/itemcompra/<int:itemPk>', itemcarrito_update_delete, name='itemcarrito_update_delete'),
-    path('itemcarritocompra/', itemCarCompraAPI, name='item_carrito_compra'),
-    path(r'api-token-auth/', obtain_jwt_token),
-    path(r'api-token-refresh/', refresh_jwt_token),
-    path('getuserlogin/', getuserlogin, name='get_user_login'),
 ]
