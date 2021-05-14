@@ -177,6 +177,14 @@ def producto_get(request, catPk, itemPk):
 
 
 @api_view(["GET"])
+def productoCarrito_get(request, itemPk):
+    if request.method == 'GET':
+        producto = Producto.objects.filter(itemId=itemPk)
+        serializer = ProductoSerializer(producto, many=True)
+        return Response(serializer.data)
+
+
+@api_view(["GET"])
 def items_get(request, catPk):
     if request.method == 'GET':
         item = ItemCompra.objects.filter(catalogo=catPk)
