@@ -29,7 +29,6 @@ urlpatterns = [
     path('catalogo/<int:catPk>/itemproducto/<int:itemPk>', producto_get, name='producto_get_by_itemId'),
     path('catalogo/<int:catPk>/items', items_get, name='items_get_by_catalogoId'),
     path('itemproducto/<int:itemPk>', productoCarrito_get, name='productoCarrito_get_by_itemId'),
-    # path('user/<int:userPk>/catalogo/', catalogos_list_post, name='Catalogos'),
     path('user/<int:userPk>/catalogo/<int:pk>',
          catalogos_update_delete, name='catalogos_update_delete'),
     path('registerClient/', RegisterClientView.as_view(), name='client_register'),
