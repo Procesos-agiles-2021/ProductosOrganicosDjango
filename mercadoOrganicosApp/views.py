@@ -30,7 +30,7 @@ def signin(request):
 @api_view(["POST"])
 def signout(request):
     do_signout(request, user=request.user)
-    return redirect('/')
+    return Response(status=status.HTTP_200_OK)
 
 
 @csrf_exempt
@@ -170,6 +170,14 @@ def itemcarrito_update_delete(request, userPk, itemPk):
 
 @api_view(["GET"])
 def producto_get(request, catPk, itemPk):
+    if request.method == 'GET':
+        producto = Producto.objects.filter(itemId=itemPk)
+        serializer = ProductoSerializer(producto, many=True)
+        return Response(serializer.data)
+
+
+@api_view(["GET"])
+def productoCarrito_get(request, itemPk):
     if request.method == 'GET':
         producto = Producto.objects.filter(itemId=itemPk)
         serializer = ProductoSerializer(producto, many=True)
