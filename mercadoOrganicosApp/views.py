@@ -14,7 +14,7 @@ from django.contrib.auth import authenticate, login, logout
 
 
 @api_view(["POST"])
-def signin(request):
+def sign_in(request):
     username = request.data.get('username', '')
     password = request.data.get('password', None)
     try:
@@ -28,7 +28,7 @@ def signin(request):
 
 
 @api_view(["POST"])
-def signout(request):
+def sign_out(request):
     do_signout(request, user=request.user)
     return Response(status=status.HTTP_200_OK)
 
@@ -41,15 +41,15 @@ def login_view(request):
 @csrf_exempt
 def signup(request):
     if request.method == 'POST':
-        newUser = User(
+        new_user = User(
             username=request.POST.get('username'),
             password=request.POST.get('password'),
             first_name=request.POST.get('first_name'),
             last_name=request.POST.get('last_name'),
             email=request.POST.get('email'),
             phone=request.POST.get('phone'))
-        newUser.save()
-    return HttpResponse(serializers.serialize("json", [newUser]))
+        new_user.save()
+    return HttpResponse(serializers.serialize("json", [new_user]))
 
 
 def redirect_to_home(request):
@@ -96,11 +96,11 @@ def catalogos_update_delete(request, userPk, pk):
 
 
 @api_view(["GET", "POST"])
-def carrito_list_create(request, userPk):
+def shopping_cart_list_create(request, user_pk):
     try:
         if request.method == 'GET':
-            carrito = Carrito.objects.filter(usuario_id=userPk)
-            serializer = CarritoSerializer(carrito, many=True)
+            shopping_cart = Carrito.objects.filter(usuario_id=user_pk)
+            serializer = CarritoSerializer(shopping_cart, many=True)
             return Response(serializer.data)
         elif request.method == 'POST':
             serializer = CarritoSerializer(data=request.data)
@@ -113,59 +113,78 @@ def carrito_list_create(request, userPk):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(["GET", "POST", "PUT"])
-def itemcarrito_list_create(request, userPk):
+@api_view(["GET", "POST"])
+def shopping_cart_item_list_create(request, user_pk):
     try:
         if request.method == 'GET':
-            carrito = Carrito.objects.filter(usuario_id=userPk)
-            serializer = CarritoDisplaySerializer(carrito, many=True)
+            shopping_cart = Carrito.objects.filter(usuario_id=user_pk)
+            serializer = CarritoDisplaySerializer(shopping_cart, many=True)
             return Response(serializer.data)
         elif request.method == 'POST':
-            carrito = Carrito.objects.filter(usuario_id=userPk).first()
-            itemCompra_id = request.data['item_compras'][0]['itemCompra_id']
-            itemCompra = ItemCompra.objects.filter(id=itemCompra_id).first()
-            cantidad = request.data['item_compras'][0]['cantidad']
-            itemCompraCarrito = ItemCompraCarrito.objects.filter(item_compra=itemCompra, carrito=carrito)
+            shopping_item_id, quantity = get_creation_shopping_cart_item_params(request)
+            shopping_cart_request = get_shopping_cart_request(user_pk, shopping_item_id)
 
-            if not itemCompraCarrito.exists():
-                itemCompraNuevo = ItemCompraCarrito(carrito=carrito, item_compra=itemCompra, cantidad=cantidad)
-                itemCompraNuevo.save()
+            if not shopping_cart_request.shopping_cart_item.exists():
+                create_shopping_cart_item(shopping_cart_request.shopping_cart, shopping_cart_request.purchase_item, quantity)
                 return Response(status=status.HTTP_200_OK)
             else:
-                item = itemCompraCarrito.first()
-                cant = int(cantidad) + item.cantidad
-                itemCompraCarrito.update(cantidad=cant)
+                update_item_quantity(shopping_cart_request.shopping_cart_item, quantity)
                 return Response(status=status.HTTP_200_OK)
-                return Response(status=status.HTTP_400_BAD_REQUEST)
-    except Carrito.DoesNotExist:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+def get_creation_shopping_cart_item_params(request):
+    shopping_item_id = request.data['item_compras'][0]['itemCompra_id']
+    quantity = request.data['item_compras'][0]['cantidad']
+    return shopping_item_id, quantity
+
+
+def get_shopping_cart_request(user_pk, shopping_item_id):
+    shopping_cart = Carrito.objects.filter(usuario_id=user_pk).first()
+    purchase_item = ItemCompra.objects.filter(id=shopping_item_id).first()
+    shopping_cart_item = ItemCompraCarrito.objects.filter(item_compra=purchase_item, carrito=shopping_cart)
+    return ShoppingCartRequest(shopping_cart_item, shopping_cart, purchase_item)
+
+
+def create_shopping_cart_item(shopping_cart, purchase_item, quantity):
+    new_shopping_cart_item = ItemCompraCarrito(carrito=shopping_cart, item_compra=purchase_item,
+                                               cantidad=quantity)
+    new_shopping_cart_item.save()
+
+
+def update_item_quantity(shopping_cart_item, quantity):
+    item = shopping_cart_item.first()
+    cant = int(quantity) + item.cantidad
+    shopping_cart_item.update(cantidad=cant)
 
 
 @api_view(["PUT", "DELETE"])
-def itemcarrito_update_delete(request, userPk, itemPk):
+def shopping_cart_item_update_delete(request, user_pk, item_pk):
     try:
         if request.method == 'DELETE':
-            carrito = Carrito.objects.filter(usuario_id=userPk).first()
-            itemCompra = ItemCompra.objects.filter(id=itemPk).first()
-            itemCompraCarrito = ItemCompraCarrito.objects.filter(item_compra=itemCompra, carrito=carrito)
-
-            if itemCompraCarrito.exists():
-                itemCompraCarrito.delete()
+            shopping_cart_item = get_shopping_cart_item(user_pk, item_pk)
+            if shopping_cart_item.exists():
+                shopping_cart_item.delete()
                 return Response(status=status.HTTP_200_OK)
             else:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
-        elif  request.method == 'PUT':
-            carrito = Carrito.objects.filter(usuario_id=userPk).first()
-            itemCompra = ItemCompra.objects.filter(id=itemPk).first()
-            itemCompraCarrito = ItemCompraCarrito.objects.filter(item_compra=itemCompra, carrito=carrito)
-
-            if itemCompraCarrito.exists():
-                itemCompraCarrito.update(cantidad=request.data['cantidad'])
+        elif request.method == 'PUT':
+            shopping_cart_item = get_shopping_cart_item(user_pk, item_pk)
+            if shopping_cart_item.exists():
+                shopping_cart_item.update(cantidad=request.data['cantidad'])
                 return Response(status=status.HTTP_200_OK)
             else:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
     except Carrito.DoesNotExist:
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+def get_shopping_cart_item(user_pk, item_pk):
+    shopping_cart = Carrito.objects.filter(usuario_id=user_pk).first()
+    purchase_item = ItemCompra.objects.filter(id=item_pk).first()
+    shopping_cart_item = ItemCompraCarrito.objects.filter(item_compra=purchase_item, carrito=shopping_cart)
+    return shopping_cart_item
 
 
 @api_view(["GET"])
@@ -185,9 +204,9 @@ def productoCarrito_get(request, itemPk):
 
 
 @api_view(["GET"])
-def items_get(request, catPk):
+def items_get(request, cat_pk):
     if request.method == 'GET':
-        item = ItemCompra.objects.filter(catalogo=catPk)
+        item = ItemCompra.objects.filter(catalogo=cat_pk)
         serializer = ItemCompraSerializer1(item, many=True)
         return Response(serializer.data)
 
