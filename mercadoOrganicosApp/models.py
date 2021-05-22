@@ -55,3 +55,10 @@ class ClientProfile(models.Model):
 
     def __str__(self):
         return f'Profile for user {self.name}'
+
+
+class ShoppingCartRequest:
+    def __init__(self, shopping_cart_item, shopping_cart, purchase_item):
+        self.shopping_cart_item = shopping_cart_item
+        self.shopping_cart = shopping_cart
+        self.purchase_item = purchase_item
