@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from rest_framework.serializers import Serializer, CharField, IntegerField, ModelSerializer, EmailField, ValidationError, BooleanField
-from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 from .models import *
@@ -11,8 +10,6 @@ class UserSerializer(Serializer):
     username = CharField(max_length=150)
     first_name = CharField(max_length=150)
     last_name = CharField(max_length=150)
-   # clientprofile = BooleanField(default=True)
-
 
 class RegisterSerializer(ModelSerializer):
     email = EmailField(
@@ -107,14 +104,10 @@ class ClientSerializer(ModelSerializer):
 
 
 class RegisterClientSerializer(ModelSerializer):
-
-   # clientprofile = ClientSerializer(read_only=True)
-
     email = EmailField(
         required=True,
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
-
     password = CharField(write_only=True, required=True,
                          validators=[validate_password])
     password2 = CharField(write_only=True, required=True)
@@ -146,9 +139,7 @@ class RegisterClientSerializer(ModelSerializer):
         )
 
         user.set_password(validated_data['password'])
-
         user.save()
-
         return user
 
 

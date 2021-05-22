@@ -16,23 +16,23 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from .views import *
-from django.conf.urls import url
 
 urlpatterns = [
     path('', redirect_to_home, name="Home"),
     path('admin/', admin.site.urls),
-    path('signin', signin, name='Sign In'),
-    path('signout', signout, name='Sign Out'),
+    path('signin', sign_in, name='Sign In'),
+    path('signout', sign_out, name='Sign Out'),
     path('login/', login_view, name='login'),
     path('register/', RegisterView.as_view(), name='auth_register'),
     path('catalogo/', catalogos_list_post, name='catalogos_list_post'),
     path('catalogo/<int:catPk>/itemproducto/<int:itemPk>', producto_get, name='producto_get_by_itemId'),
-    path('catalogo/<int:catPk>/items', items_get, name='items_get_by_catalogoId'),
+    path('catalogo/<int:cat_pk>/items', items_get, name='items_get_by_catalogoId'),
     path('itemproducto/<int:itemPk>', productoCarrito_get, name='productoCarrito_get_by_itemId'),
     path('user/<int:userPk>/catalogo/<int:pk>',
          catalogos_update_delete, name='catalogos_update_delete'),
     path('registerClient/', RegisterClientView.as_view(), name='client_register'),
-    path('carrito/<int:userPk>', carrito_list_create, name='carrito_list_create'),
-    path('itemcarrito/<int:userPk>', itemcarrito_list_create, name='itemcarrito_list_create'),
-    path('itemcarrito/<int:userPk>/itemcompra/<int:itemPk>', itemcarrito_update_delete, name='itemcarrito_update_delete'),
+    path('carrito/<int:userPk>', shopping_cart_list_create, name='shopping_cart_list_create'),
+    path('itemcarrito/<int:user_pk>', shopping_cart_item_list_create, name='shopping_cart_item_list_create'),
+    path('itemcarrito/<int:user_pk>/itemcompra/<int:item_pk>', shopping_cart_item_update_delete,
+         name='shopping_cart_item_update_delete'),
 ]
