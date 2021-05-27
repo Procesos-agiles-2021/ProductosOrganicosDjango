@@ -211,6 +211,16 @@ def items_get(request, cat_pk):
         return Response(serializer.data)
 
 
+@api_view(["GET"])
+def producto_catalogo_remove(request, catPk, itemPk):
+    return ""
+
+
+@api_view(["GET"])
+def producto_catalogo_add(request, catPk, itemPk):
+    return ""
+
+
 class RegisterClientView(generics.CreateAPIView):
     queryset = User.objects.all()
     permission_classes = (AllowAny,)
