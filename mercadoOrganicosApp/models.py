@@ -32,7 +32,8 @@ class Producto(models.Model):
 
 class Carrito(models.Model):
     usuario_id = models.OneToOneField(User, on_delete=models.CASCADE)
-    item_compras = models.ManyToManyField(ItemCompra, through='ItemCompraCarrito')
+    item_compras = models.ManyToManyField(
+        ItemCompra, through='ItemCompraCarrito')
 
     class Meta:
         verbose_name_plural = "carritos"
@@ -62,3 +63,10 @@ class ShoppingCartRequest:
         self.shopping_cart_item = shopping_cart_item
         self.shopping_cart = shopping_cart
         self.purchase_item = purchase_item
+
+
+class Stock:
+    ticker = models.CharField(max_length=11)
+
+    def __str__(self):
+        return self.ticker
