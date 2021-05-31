@@ -25,7 +25,7 @@ class Producto(models.Model):
     nombre = models.CharField(max_length=100)
     precio = models.FloatField()
     itemId = models.ForeignKey(to=ItemCompra, on_delete=models.DO_NOTHING)
-    cantidad = models.IntegerField()
+    cantidad = models.IntegerField(default=0)
 
     class Meta:
         verbose_name_plural = "Productos"
@@ -57,14 +57,15 @@ class ClientProfile(models.Model):
     def __str__(self):
         return f'Profile for user {self.name}'
 
+
+class Oferta(models.Model):
+    productoId = models.ForeignKey(Producto, on_delete=models.PROTECT)
+    cantidadRestante = models.IntegerField()
+    precioUnidad = models.FloatField()
+
+
 class ShoppingCartRequest:
     def __init__(self, shopping_cart_item, shopping_cart, purchase_item):
         self.shopping_cart_item = shopping_cart_item
         self.shopping_cart = shopping_cart
         self.purchase_item = purchase_item
-
-
-class Oferta:
-    productoId = models.ForeignKey(Producto, on_delete=models.PROTECT())
-    cantidadRestante = models.IntegerField()
-    precioUnidad = models.FloatField()
