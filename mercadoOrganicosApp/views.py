@@ -199,6 +199,12 @@ def producto_get(request, catPk, itemPk):
 def productoCarrito_get(request, itemPk):
     if request.method == 'GET':
         producto = Producto.objects.filter(itemId=itemPk)
+        if producto.exists():
+            ofertas = Oferta.objects.filter(productoId=producto.id)
+            cantidadStock = 0
+            for f in ofertas:
+                cantidadStock += f.cantidadRestante
+            producto.update(cantidad=cantidadStock)
         serializer = ProductoSerializer(producto, many=True)
         return Response(serializer.data)
 
@@ -213,12 +219,16 @@ def items_get(request, cat_pk):
 
 @api_view(["GET"])
 def producto_catalogo_remove(request, catPk, itemPk):
-    return ""
+    item = ItemCompra.objects.filter(catalogo=catPk, id=itemPk)
+    if item.exists():
+        item.update(visibilidad=False)
 
 
 @api_view(["GET"])
 def producto_catalogo_add(request, catPk, itemPk):
-    return ""
+    item = ItemCompra.objects.filter(catalogo=catPk, id=itemPk)
+    if item.exists():
+        item.update(visibilidad=True)
 
 
 class RegisterClientView(generics.CreateAPIView):

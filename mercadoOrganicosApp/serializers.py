@@ -94,7 +94,7 @@ class CarritoDisplaySerializer(serializers.ModelSerializer):
 class ProductoSerializer(ModelSerializer):
     class Meta:
         model = Producto
-        fields = ('id', 'nombre', 'precio')
+        fields = ('id', 'nombre', 'precio', 'cantidad')
 
 
 class ClientSerializer(ModelSerializer):
