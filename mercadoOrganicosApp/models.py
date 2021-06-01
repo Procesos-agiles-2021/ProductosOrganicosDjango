@@ -25,6 +25,9 @@ class Producto(models.Model):
     nombre = models.CharField(max_length=100)
     precio = models.FloatField()
     itemId = models.ForeignKey(to=ItemCompra, on_delete=models.DO_NOTHING)
+    cantidad = models.IntegerField()
+    productorId = models.OneToOneField(User, on_delete=models.CASCADE)
+    precioProductor = models.FloatField()
 
     class Meta:
         verbose_name_plural = "Productos"

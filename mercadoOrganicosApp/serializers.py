@@ -11,6 +11,7 @@ class UserSerializer(Serializer):
     first_name = CharField(max_length=150)
     last_name = CharField(max_length=150)
 
+
 class RegisterSerializer(ModelSerializer):
     email = EmailField(
         required=True,
@@ -87,14 +88,15 @@ class CarritoDisplaySerializer(serializers.ModelSerializer):
         fields = ('id', 'usuario_id', 'item_compras')
 
     def get_item_compras(self, carrito_instance):
-        query_datas = ItemCompraCarrito.objects.filter(carrito=carrito_instance)
+        query_datas = ItemCompraCarrito.objects.filter(
+            carrito=carrito_instance)
         return [ItemCompraCarritoSerializer(itemCompra).data for itemCompra in query_datas]
 
 
 class ProductoSerializer(ModelSerializer):
     class Meta:
         model = Producto
-        fields = ('id', 'nombre', 'precio')
+        fields = ('id', 'nombre', 'precio', 'cantidad')
 
 
 class ClientSerializer(ModelSerializer):
