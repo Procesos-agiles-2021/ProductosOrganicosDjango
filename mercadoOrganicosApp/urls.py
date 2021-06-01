@@ -35,4 +35,5 @@ urlpatterns = [
     path('itemcarrito/<int:user_pk>', shopping_cart_item_list_create, name='shopping_cart_item_list_create'),
     path('itemcarrito/<int:user_pk>/itemcompra/<int:item_pk>', shopping_cart_item_update_delete,
          name='shopping_cart_item_update_delete'),
+    path('orden/', create_order, name='create_order'),
 ]
