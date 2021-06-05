@@ -33,7 +33,8 @@ class Producto(models.Model):
 
 class Carrito(models.Model):
     usuario_id = models.OneToOneField(User, on_delete=models.CASCADE)
-    item_compras = models.ManyToManyField(ItemCompra, through='ItemCompraCarrito')
+    item_compras = models.ManyToManyField(
+        ItemCompra, through='ItemCompraCarrito')
 
     class Meta:
         verbose_name_plural = "carritos"
@@ -49,13 +50,23 @@ class ItemCompraCarrito(models.Model):
 
 
 class ClientProfile(models.Model):
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    # user = models.OneToOneField(
+    #    settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     active = models.BooleanField(default=True)
     name = models.CharField(max_length=64)
 
+    objects = models.Manager()
+
     def __str__(self):
-        return f'Profile for user {self.name}'
+        return f'Profile for user {self.user}'
+
+
+class Productor(models.Model):
+    nombreFinca = models.CharField(max_length=64)
+    imagen = models.ImageField()
+    descripcion = models.ImageField()
+    direccionDespacho = models.CharField(max_length=64)
 
 
 class Oferta(models.Model):
