@@ -11,11 +11,5 @@ insert into public."mercadoOrganicosApp_oferta" values (1, 10, 1200, 1);
 insert into public."mercadoOrganicosApp_oferta" values (2, 20, 1400, 1);
 insert into public."mercadoOrganicosApp_itemcompra" values (2, 'https://sc04.alicdn.com/kf/Uab9e5ed71d6c42578a42cf1ea5af7d7bm.jpg', true, 1);
 insert into public."mercadoOrganicosApp_producto" values (2, 'Manzana', 3200, 2);
-<<<<<<< HEAD
-
-2021-03-01 00:00:00-05
-
-=======
 insert into public."mercadoOrganicosApp_oferta" values (3, 10, 2200, 2);
 insert into public."mercadoOrganicosApp_oferta" values (4, 30, 2400, 2);
->>>>>>> dev
