@@ -154,4 +154,4 @@ class OrdenSerializer(ModelSerializer):
     class Meta:
         model = Orden
         fields = ('id', 'fecha_compra', 'fecha_entrega', 'hora_entrega', 'ciudad_entrega', 'direccion_entrega', 'metodo_pago',
-                  'numero_tarjeta', 'numero_cuota', 'carrito')
+                  'numero_tarjeta', 'numero_cuota', 'precio_total', 'carrito')

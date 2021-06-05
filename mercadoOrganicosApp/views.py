@@ -247,11 +247,8 @@ class RegisterClientView(generics.CreateAPIView):
 def create_order(request):
     shopping_cart_id = request.data['carrito']
     try:
-        print(shopping_cart_id)
         shopping_cart = Carrito.objects.filter(usuario_id=shopping_cart_id)
-        print(shopping_cart)
         if shopping_cart.exists():
-            print(request.data)
             serializer = OrdenSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
