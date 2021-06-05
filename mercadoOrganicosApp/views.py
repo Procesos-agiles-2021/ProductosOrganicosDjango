@@ -252,17 +252,28 @@ def create_order(request):
         shopping_cart = Carrito.objects.filter(usuario_id=shopping_cart_id)
         print(shopping_cart)
         if shopping_cart.exists():
-            print(request.data)
-            serializer = OrdenSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            else:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
+            create_order_db(request.data, shopping_cart.first())
+            return Response('OK', status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+def create_order_db(data, shopping_cart):
+    print(data['fecha_compra'])
+    ordenDb = Orden(fecha_compra=data['fecha_compra'],
+                    fecha_entrega=data['fecha_entrega'],
+                    hora_entrega=data['hora_entrega'],
+                    ciudad_entrega=data['ciudad_entrega'],
+                    direccion_entrega=data['direccion_entrega'],
+                    metodo_pago=data['metodo_pago'],
+                    numero_tarjeta=data['numero_tarjeta'],
+                    numero_cuota=data['numero_cuota'],
+                    precio_total=data['precio_total'],
+                    carrito=shopping_cart
+                    )
+    return ordenDb.save()
 
 
 @api_view(["GET"])
@@ -287,7 +298,8 @@ def decrease_inv(request, p_pk, cant):
     if request.method == 'GET':
         producto = Producto.objects.filter(id=p_pk)
         if producto.exists():
-            ofertas = Oferta.objects.filter(productoId=producto.values_list('id', flat=True).first()).order_by('precioUnidad')
+            ofertas = Oferta.objects.filter(productoId=producto.values_list('id', flat=True).first()).order_by(
+                'precioUnidad')
             cantidadStock = 0
             cantidadNueva = 0
             for f in ofertas:
