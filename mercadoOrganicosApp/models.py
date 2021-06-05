@@ -59,7 +59,9 @@ class ClientProfile(models.Model):
 
 class Orden(models.Model):
     fecha_compra = models.DateTimeField(verbose_name='Fecha de compra')
-    fecha_entrega = models.DateTimeField(verbose_name='Fecha de entrega')
+    fecha_entrega = models.DateField(verbose_name='Fecha de entrega')
+    hora_entrega = models.CharField(max_length=200)
+    ciudad_entrega = models.CharField(max_length=300)
     direccion_entrega = models.CharField(max_length=400)
     metodo_pago = models.CharField(max_length=200)
     numero_tarjeta = models.CharField(max_length=200)
