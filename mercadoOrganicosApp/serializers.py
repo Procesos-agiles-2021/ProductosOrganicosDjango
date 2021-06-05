@@ -5,13 +5,42 @@ from django.contrib.auth.password_validation import validate_password
 from .models import *
 
 
+# class UserSerializer(Serializer):
+#    id = IntegerField(read_only=True)
+#    username = CharField(max_length=150)
+#    first_name = CharField(max_length=150)
+#    last_name = CharField(max_length=150)
+class ClientProfileSerializer(ModelSerializer):
+    class Meta:
+        model = ClientProfile
+        fields = ('user', 'active', 'name')
+
+    def create(self, validated_data):
+        client = ClientProfile.objects.create(
+            user=validated_data['username'],
+            activate=validated_data['email'],
+            name=validated_data['first_name'],
+        )
+
+        client.save()
+
+        return client
+
+
 class UserSerializer(Serializer):
     id = IntegerField(read_only=True)
     username = CharField(max_length=150)
     first_name = CharField(max_length=150)
     last_name = CharField(max_length=150)
+    owner = ClientProfileSerializer(read_only=True)
+    ownerRol = serializers.PrimaryKeyRelatedField(
+        write_only=True, queryset=ClientProfile.objects.all(), source='owner')
+
 
 class RegisterSerializer(ModelSerializer):
+    ClienteProfile = serializers.PrimaryKeyRelatedField(
+        queryset=ClientProfile.objects.all())
+
     email = EmailField(
         required=True,
         validators=[UniqueValidator(queryset=User.objects.all())]
@@ -24,12 +53,17 @@ class RegisterSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = ('username', 'password', 'password2',
-                  'email', 'first_name', 'last_name', 'clientprofile')
+                  'email', 'first_name', 'last_name', 'is_staff', ClientProfile)
         extra_kwargs = {
             'first_name': {'required': True},
             'last_name': {'required': True},
+            'is_staff': {'required': True},
             'clientprofile': {'required': True}
         }
+
+    class Meta:
+        model = ClientProfile
+        fields = ('user', 'active', 'name')
 
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
@@ -44,11 +78,20 @@ class RegisterSerializer(ModelSerializer):
             email=validated_data['email'],
             first_name=validated_data['first_name'],
             last_name=validated_data['last_name'],
-            clientprofile=validated_data['clientprofile']
+            is_staff="True",
+            clientprofile=validated_data['clientprofile'],
+
         )
 
         user.set_password(validated_data['password'])
         user.save()
+        cliente = ClientProfileSerializer.objects.create(
+            user=user,
+            activate=True,
+            name="cliente",
+        )
+
+        cliente.save()
 
         return user
 
@@ -87,7 +130,8 @@ class CarritoDisplaySerializer(serializers.ModelSerializer):
         fields = ('id', 'usuario_id', 'item_compras')
 
     def get_item_compras(self, carrito_instance):
-        query_datas = ItemCompraCarrito.objects.filter(carrito=carrito_instance)
+        query_datas = ItemCompraCarrito.objects.filter(
+            carrito=carrito_instance)
         return [ItemCompraCarritoSerializer(itemCompra).data for itemCompra in query_datas]
 
 

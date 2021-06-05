@@ -11,6 +11,10 @@ from .serializers import *
 from .models import *
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from rest_framework.viewsets import ModelViewSet
+from rest_framework_roles.granting import is_self
+import logging
+logger = logging.getLogger(__name__)
 
 
 @api_view(["POST"])
@@ -19,9 +23,12 @@ def sign_in(request):
     password = request.data.get('password', None)
     try:
         user, token = do_signup(request, username, password)
+        rol = rol_out(user)
+
         return Response({
             'token': token,
             'data': UserSerializer(user).data,
+            'dataRol': rol.name,
         }, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_403_FORBIDDEN)
@@ -31,6 +38,11 @@ def sign_in(request):
 def sign_out(request):
     do_signout(request, user=request.user)
     return Response(status=status.HTTP_200_OK)
+
+
+def rol_out(user):
+    cliente = ClientProfile.objects.get(user=user)
+    return cliente
 
 
 @csrf_exempt
@@ -58,8 +70,10 @@ def redirect_to_home(request):
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
+    queryset1 = ClientProfile.objects.all()
     permission_classes = (AllowAny,)
     serializer_class = RegisterSerializer
+    serializer_class1 = ClientProfileSerializer
 
 
 @api_view(["GET", "POST"])
@@ -121,14 +135,18 @@ def shopping_cart_item_list_create(request, user_pk):
             serializer = CarritoDisplaySerializer(shopping_cart, many=True)
             return Response(serializer.data)
         elif request.method == 'POST':
-            shopping_item_id, quantity = get_creation_shopping_cart_item_params(request)
-            shopping_cart_request = get_shopping_cart_request(user_pk, shopping_item_id)
+            shopping_item_id, quantity = get_creation_shopping_cart_item_params(
+                request)
+            shopping_cart_request = get_shopping_cart_request(
+                user_pk, shopping_item_id)
 
             if not shopping_cart_request.shopping_cart_item.exists():
-                create_shopping_cart_item(shopping_cart_request.shopping_cart, shopping_cart_request.purchase_item, quantity)
+                create_shopping_cart_item(
+                    shopping_cart_request.shopping_cart, shopping_cart_request.purchase_item, quantity)
                 return Response(status=status.HTTP_200_OK)
             else:
-                update_item_quantity(shopping_cart_request.shopping_cart_item, quantity)
+                update_item_quantity(
+                    shopping_cart_request.shopping_cart_item, quantity)
                 return Response(status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -143,7 +161,8 @@ def get_creation_shopping_cart_item_params(request):
 def get_shopping_cart_request(user_pk, shopping_item_id):
     shopping_cart = Carrito.objects.filter(usuario_id=user_pk).first()
     purchase_item = ItemCompra.objects.filter(id=shopping_item_id).first()
-    shopping_cart_item = ItemCompraCarrito.objects.filter(item_compra=purchase_item, carrito=shopping_cart)
+    shopping_cart_item = ItemCompraCarrito.objects.filter(
+        item_compra=purchase_item, carrito=shopping_cart)
     return ShoppingCartRequest(shopping_cart_item, shopping_cart, purchase_item)
 
 
@@ -183,7 +202,8 @@ def shopping_cart_item_update_delete(request, user_pk, item_pk):
 def get_shopping_cart_item(user_pk, item_pk):
     shopping_cart = Carrito.objects.filter(usuario_id=user_pk).first()
     purchase_item = ItemCompra.objects.filter(id=item_pk).first()
-    shopping_cart_item = ItemCompraCarrito.objects.filter(item_compra=purchase_item, carrito=shopping_cart)
+    shopping_cart_item = ItemCompraCarrito.objects.filter(
+        item_compra=purchase_item, carrito=shopping_cart)
     return shopping_cart_item
 
 
@@ -192,7 +212,8 @@ def producto_get(request, catPk, itemPk):
     if request.method == 'GET':
         producto = Producto.objects.filter(itemId=itemPk)
         if producto.exists():
-            ofertas = Oferta.objects.filter(productoId=producto.values_list('id', flat=True).first())
+            ofertas = Oferta.objects.filter(
+                productoId=producto.values_list('id', flat=True).first())
             cantidadStock = 0
             for f in ofertas:
                 cantidadStock += f.cantidadRestante
@@ -241,3 +262,12 @@ class RegisterClientView(generics.CreateAPIView):
     queryset = User.objects.all()
     permission_classes = (AllowAny,)
     serializer_class = RegisterClientSerializer
+    serializer_client_class = ClientProfileSerializer
+
+
+@api_view(["GET"])
+def users_get(request):
+    if request.method == 'GET':
+        user = ClientProfile.objects.all()
+        serializer = ClientProfileSerializer(user, many=True)
+        return Response(serializer.data)
