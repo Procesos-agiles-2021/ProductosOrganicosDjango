@@ -166,7 +166,26 @@ def shopping_cart_item_update_delete(request, user_pk, item_pk):
         if request.method == 'DELETE':
             shopping_cart_item = get_shopping_cart_item(user_pk, item_pk)
             if shopping_cart_item.exists():
-                shopping_cart_item.delete()
+                producto = Producto.objects.filter(itemid_id=item_pk)
+                if producto.exists():
+                    ofertas = Oferta.objects.filter(productoId=producto.values_list('id', flat=True).first()).order_by(
+                        '-precioUnidad','cantidadRestante')
+                    cantidadStock = 0
+                    cantidadNueva = 0
+                    cant = shopping_cart_item.cantidad
+                    for f in ofertas:
+                        if cant > 0:
+                            if cant + f.cantidadRestante <= f.cantidadOriginal:
+                                cantidadNueva = f.cantidadRestante + cant
+                                cant = 0
+                            else:
+                                cantidadNueva = f.cantidadOriginal
+                                cant -= (f.cantidadOriginal - f.cantidadRestante)
+                            f.cantidadRestante = cantidadNueva
+                            f.save()
+                        cantidadStock += f.cantidadRestante
+                    producto.update(cantidad=cantidadStock)
+                    shopping_cart_item.delete()
                 return Response(status=status.HTTP_200_OK)
             else:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -213,14 +232,13 @@ def productoCarrito_get(request, itemPk):
 @api_view(["GET"])
 def items_get(request, cat_pk):
     if request.method == 'GET':
-        item = ItemCompra.objects.filter(catalogo=cat_pk)
+        item = ItemCompra.objects.filter(catalogo=cat_pk).order_by('id')
         serializer = ItemCompraSerializer1(item, many=True)
         return Response(serializer.data)
 
 
 @api_view(["GET"])
 def producto_catalogo_remove(request, catPk, itemPk):
-    print("llegó este id: " + str(itemPk))
     item = ItemCompra.objects.filter(catalogo=catPk, id=itemPk)
     if item.exists():
         item.update(visibilidad=False)
@@ -230,7 +248,6 @@ def producto_catalogo_remove(request, catPk, itemPk):
 
 @api_view(["GET"])
 def producto_catalogo_add(request, catPk, itemPk):
-    print("llegó este id: " + str(itemPk))
     item = ItemCompra.objects.filter(catalogo=catPk, id=itemPk)
     if item.exists():
         item.update(visibilidad=True)
