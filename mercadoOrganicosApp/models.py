@@ -73,6 +73,7 @@ class Orden(models.Model):
     metodo_pago = models.CharField(max_length=200)
     numero_tarjeta = models.CharField(max_length=200, blank=True, null=True)
     numero_cuota = models.IntegerField(blank=True, null=True)
+    precio_total = models.FloatField(default=0)
     carrito = models.ForeignKey(Carrito, on_delete=models.PROTECT)
 
     class Meta:
