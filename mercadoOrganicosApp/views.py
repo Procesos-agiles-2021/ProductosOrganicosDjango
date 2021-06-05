@@ -125,7 +125,8 @@ def shopping_cart_item_list_create(request, user_pk):
             shopping_cart_request = get_shopping_cart_request(user_pk, shopping_item_id)
 
             if not shopping_cart_request.shopping_cart_item.exists():
-                create_shopping_cart_item(shopping_cart_request.shopping_cart, shopping_cart_request.purchase_item, quantity)
+                create_shopping_cart_item(shopping_cart_request.shopping_cart, shopping_cart_request.purchase_item,
+                                          quantity)
                 return Response(status=status.HTTP_200_OK)
             else:
                 update_item_quantity(shopping_cart_request.shopping_cart_item, quantity)
@@ -263,6 +264,7 @@ def create_order(request):
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 @api_view(["GET"])
 def get_order(request, user_pk):
     if request.method == 'GET':
@@ -271,9 +273,34 @@ def get_order(request, user_pk):
         serializer = OrdenSerializer(orden_cart, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
 @api_view(["GET"])
 def get_order_unit(request, orden_pk):
     if request.method == 'GET':
         orden_cart = Orden.objects.filter(id=orden_pk)
         serializer = OrdenSerializer(orden_cart, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+def decrease_inv(request, p_pk, cant):
+    if request.method == 'GET':
+        producto = Producto.objects.filter(id=p_pk)
+        if producto.exists():
+            ofertas = Oferta.objects.filter(productoId=producto.values_list('id', flat=True).first()).order_by('precioUnidad')
+            cantidadStock = 0
+            cantidadNueva = 0
+            for f in ofertas:
+                if cant > 0:
+                    if cant <= f.cantidadRestante:
+                        cantidadNueva = f.cantidadRestante - cant
+                        cant = 0
+                    else:
+                        cantidadNueva = 0
+                        cant -= f.cantidadRestante
+                    f.cantidadRestante = cantidadNueva
+                    f.save()
+                cantidadStock += f.cantidadRestante
+            producto.update(cantidad=cantidadStock)
+        serializer = ProductoSerializer(producto, many=True)
+        return Response(serializer.data)
