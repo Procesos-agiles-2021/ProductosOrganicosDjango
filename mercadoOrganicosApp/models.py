@@ -25,6 +25,7 @@ class Producto(models.Model):
     nombre = models.CharField(max_length=100)
     precio = models.FloatField()
     itemId = models.ForeignKey(to=ItemCompra, on_delete=models.DO_NOTHING)
+    cantidad = models.IntegerField(default=0)
 
     class Meta:
         verbose_name_plural = "Productos"
@@ -57,13 +58,21 @@ class ClientProfile(models.Model):
         return f'Profile for user {self.name}'
 
 
+class Oferta(models.Model):
+    productoId = models.ForeignKey(Producto, on_delete=models.PROTECT)
+    cantidadRestante = models.IntegerField()
+    precioUnidad = models.FloatField()
+
+
 class Orden(models.Model):
     fecha_compra = models.DateTimeField(verbose_name='Fecha de compra')
-    fecha_entrega = models.DateTimeField(verbose_name='Fecha de entrega')
+    fecha_entrega = models.DateField(verbose_name='Fecha de entrega')
+    hora_entrega = models.CharField(max_length=200)
+    ciudad_entrega = models.CharField(max_length=300)
     direccion_entrega = models.CharField(max_length=400)
     metodo_pago = models.CharField(max_length=200)
-    numero_tarjeta = models.CharField(max_length=200)
-    numero_cuota = models.IntegerField()
+    numero_tarjeta = models.CharField(max_length=200, blank=True, null=True)
+    numero_cuota = models.IntegerField(blank=True, null=True)
     carrito = models.ForeignKey(Carrito, on_delete=models.PROTECT)
 
     class Meta:

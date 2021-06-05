@@ -95,7 +95,7 @@ class CarritoDisplaySerializer(serializers.ModelSerializer):
 class ProductoSerializer(ModelSerializer):
     class Meta:
         model = Producto
-        fields = ('id', 'nombre', 'precio')
+        fields = ('id', 'nombre', 'precio', 'cantidad')
 
 
 class ClientSerializer(ModelSerializer):
@@ -153,5 +153,5 @@ class ItemCompraSerializer1(ModelSerializer):
 class OrdenSerializer(ModelSerializer):
     class Meta:
         model = Orden
-        fields = ('id', 'fecha_compra', 'fecha_entrega', 'direccion_entrega', 'metodo_pago',
+        fields = ('id', 'fecha_compra', 'fecha_entrega', 'hora_entrega', 'ciudad_entrega', 'direccion_entrega', 'metodo_pago',
                   'numero_tarjeta', 'numero_cuota', 'carrito')
