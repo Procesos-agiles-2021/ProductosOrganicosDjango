@@ -1,5 +1,4 @@
 """mercadoOrganico URL Configuration
-
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.1/topics/http/urls/
 Examples:
@@ -26,6 +25,8 @@ urlpatterns = [
     path('register/', RegisterView.as_view(), name='auth_register'),
     path('catalogo/', catalogos_list_post, name='catalogos_list_post'),
     path('catalogo/<int:catPk>/itemproducto/<int:itemPk>', producto_get, name='producto_get_by_itemId'),
+    path('catalogo/<int:catPk>/itemproducto/<int:itemPk>/remove', producto_catalogo_remove, name='producto_catalogo_remove'),
+    path('catalogo/<int:catPk>/itemproducto/<int:itemPk>/add', producto_catalogo_add, name='producto_catalogo_add'),
     path('catalogo/<int:cat_pk>/items', items_get, name='items_get_by_catalogoId'),
     path('itemproducto/<int:itemPk>', productoCarrito_get, name='productoCarrito_get_by_itemId'),
     path('user/<int:userPk>/catalogo/<int:pk>',
@@ -36,4 +37,7 @@ urlpatterns = [
     path('itemcarrito/<int:user_pk>/itemcompra/<int:item_pk>', shopping_cart_item_update_delete,
          name='shopping_cart_item_update_delete'),
     path('orden/', create_order, name='create_order'),
+    path('producto/<int:p_pk>/decrease/<int:cant>', decrease_inv, name='decrease_inv'),
+    path('getorden/<int:user_pk>', get_order, name='get_order'),
+    path('get_order_unit/<int:orden_pk>', get_order_unit, name='get_order_unit'),
 ]

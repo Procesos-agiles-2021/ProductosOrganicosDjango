@@ -125,7 +125,8 @@ def shopping_cart_item_list_create(request, user_pk):
             shopping_cart_request = get_shopping_cart_request(user_pk, shopping_item_id)
 
             if not shopping_cart_request.shopping_cart_item.exists():
-                create_shopping_cart_item(shopping_cart_request.shopping_cart, shopping_cart_request.purchase_item, quantity)
+                create_shopping_cart_item(shopping_cart_request.shopping_cart, shopping_cart_request.purchase_item,
+                                          quantity)
                 return Response(status=status.HTTP_200_OK)
             else:
                 update_item_quantity(shopping_cart_request.shopping_cart_item, quantity)
@@ -191,6 +192,12 @@ def get_shopping_cart_item(user_pk, item_pk):
 def producto_get(request, catPk, itemPk):
     if request.method == 'GET':
         producto = Producto.objects.filter(itemId=itemPk)
+        if producto.exists():
+            ofertas = Oferta.objects.filter(productoId=producto.values_list('id', flat=True).first())
+            cantidadStock = 0
+            for f in ofertas:
+                cantidadStock += f.cantidadRestante
+            producto.update(cantidad=cantidadStock)
         serializer = ProductoSerializer(producto, many=True)
         return Response(serializer.data)
 
@@ -209,6 +216,26 @@ def items_get(request, cat_pk):
         item = ItemCompra.objects.filter(catalogo=cat_pk)
         serializer = ItemCompraSerializer1(item, many=True)
         return Response(serializer.data)
+
+
+@api_view(["GET"])
+def producto_catalogo_remove(request, catPk, itemPk):
+    print("llegó este id: " + str(itemPk))
+    item = ItemCompra.objects.filter(catalogo=catPk, id=itemPk)
+    if item.exists():
+        item.update(visibilidad=False)
+    serializer = ItemCompraSerializer1(item, many=True)
+    return Response(serializer.data)
+
+
+@api_view(["GET"])
+def producto_catalogo_add(request, catPk, itemPk):
+    print("llegó este id: " + str(itemPk))
+    item = ItemCompra.objects.filter(catalogo=catPk, id=itemPk)
+    if item.exists():
+        item.update(visibilidad=True)
+    serializer = ItemCompraSerializer1(item, many=True)
+    return Response(serializer.data)
 
 
 class RegisterClientView(generics.CreateAPIView):
@@ -235,3 +262,42 @@ def create_order(request):
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@api_view(["GET"])
+def get_order(request, user_pk):
+    if request.method == 'GET':
+        shopping_cart = Carrito.objects.filter(usuario_id=user_pk).first()
+        orden_cart = Orden.objects.filter(carrito_id=shopping_cart)
+        serializer = OrdenSerializer(orden_cart, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+def get_order_unit(request, orden_pk):
+    if request.method == 'GET':
+        orden_cart = Orden.objects.filter(id=orden_pk)
+        serializer = OrdenSerializer(orden_cart, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+def decrease_inv(request, p_pk, cant):
+    if request.method == 'GET':
+        producto = Producto.objects.filter(id=p_pk)
+        if producto.exists():
+            ofertas = Oferta.objects.filter(productoId=producto.values_list('id', flat=True).first()).order_by('precioUnidad')
+            cantidadStock = 0
+            cantidadNueva = 0
+            for f in ofertas:
+                if cant > 0:
+                    if cant <= f.cantidadRestante:
+                        cantidadNueva = f.cantidadRestante - cant
+                        cant = 0
+                    else:
+                        cantidadNueva = 0
+                        cant -= f.cantidadRestante
+                    f.cantidadRestante = cantidadNueva
+                    f.save()
+                cantidadStock += f.cantidadRestante
+            producto.update(cantidad=cantidadStock)
+        serializer = ProductoSerializer(producto, many=True)
+        return Response(serializer.data)
