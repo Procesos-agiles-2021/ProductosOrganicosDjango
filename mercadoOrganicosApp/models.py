@@ -25,6 +25,7 @@ class Producto(models.Model):
     nombre = models.CharField(max_length=100)
     precio = models.FloatField()
     itemId = models.ForeignKey(to=ItemCompra, on_delete=models.DO_NOTHING)
+    cantidad = models.IntegerField(default=0)
 
     class Meta:
         verbose_name_plural = "Productos"
@@ -55,6 +56,12 @@ class ClientProfile(models.Model):
 
     def __str__(self):
         return f'Profile for user {self.name}'
+
+
+class Oferta(models.Model):
+    productoId = models.ForeignKey(Producto, on_delete=models.PROTECT)
+    cantidadRestante = models.IntegerField()
+    precioUnidad = models.FloatField()
 
 
 class Orden(models.Model):

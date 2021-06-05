@@ -26,6 +26,8 @@ urlpatterns = [
     path('register/', RegisterView.as_view(), name='auth_register'),
     path('catalogo/', catalogos_list_post, name='catalogos_list_post'),
     path('catalogo/<int:catPk>/itemproducto/<int:itemPk>', producto_get, name='producto_get_by_itemId'),
+    path('catalogo/<int:catPk>/itemproducto/<int:itemPk>/remove', producto_catalogo_remove, name='producto_catalogo_remove'),
+    path('catalogo/<int:catPk>/itemproducto/<int:itemPk>/add', producto_catalogo_add, name='producto_catalogo_add'),
     path('catalogo/<int:cat_pk>/items', items_get, name='items_get_by_catalogoId'),
     path('itemproducto/<int:itemPk>', productoCarrito_get, name='productoCarrito_get_by_itemId'),
     path('user/<int:userPk>/catalogo/<int:pk>',
