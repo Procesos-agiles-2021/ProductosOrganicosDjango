@@ -11,6 +11,7 @@ class UserSerializer(Serializer):
     first_name = CharField(max_length=150)
     last_name = CharField(max_length=150)
 
+
 class RegisterSerializer(ModelSerializer):
     email = EmailField(
         required=True,
@@ -147,3 +148,10 @@ class ItemCompraSerializer1(ModelSerializer):
     class Meta:
         model = ItemCompra
         fields = ('id', 'imagenUrl', 'visibilidad')
+
+
+class OrdenSerializer(ModelSerializer):
+    class Meta:
+        model = Orden
+        fields = ('id', 'fecha_compra', 'fecha_entrega', 'direccion_entrega', 'metodo_pago',
+                  'numero_tarjeta', 'numero_cuota', 'carrito')

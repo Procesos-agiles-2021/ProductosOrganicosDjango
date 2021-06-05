@@ -215,3 +215,36 @@ class RegisterClientView(generics.CreateAPIView):
     queryset = User.objects.all()
     permission_classes = (AllowAny,)
     serializer_class = RegisterClientSerializer
+
+
+@api_view(["POST"])
+def create_order(request):
+    shopping_cart_id = request.data['carrito']
+    try:
+        shopping_cart = Carrito.objects.filter(usuario_id=shopping_cart_id)
+        if shopping_cart.exists():
+            serializer = OrdenSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(["GET"])
+def get_order(request, user_pk):
+    if request.method == 'GET':
+        shopping_cart = Carrito.objects.filter(usuario_id=user_pk).first()
+        orden_cart = Orden.objects.filter(carrito_id=shopping_cart)
+        serializer = OrdenSerializer(orden_cart, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+def get_order_unit(request, orden_pk):
+    if request.method == 'GET':
+        orden_cart = Orden.objects.filter(id=orden_pk)
+        serializer = OrdenSerializer(orden_cart, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

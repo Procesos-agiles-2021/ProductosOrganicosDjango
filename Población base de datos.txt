@@ -9,3 +9,6 @@ insert into public."mercadoOrganicosApp_itemcompra" values (1, 'https://noticias
 insert into public."mercadoOrganicosApp_producto" values (1, 'Banano', 2000, 1);
 insert into public."mercadoOrganicosApp_itemcompra" values (2, 'https://sc04.alicdn.com/kf/Uab9e5ed71d6c42578a42cf1ea5af7d7bm.jpg', true, 1);
 insert into public."mercadoOrganicosApp_producto" values (2, 'Manzana', 3200, 2);
+
+2021-03-01 00:00:00-05
+

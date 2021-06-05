@@ -1,5 +1,4 @@
 """mercadoOrganico URL Configuration
-
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.1/topics/http/urls/
 Examples:
@@ -35,4 +34,7 @@ urlpatterns = [
     path('itemcarrito/<int:user_pk>', shopping_cart_item_list_create, name='shopping_cart_item_list_create'),
     path('itemcarrito/<int:user_pk>/itemcompra/<int:item_pk>', shopping_cart_item_update_delete,
          name='shopping_cart_item_update_delete'),
+    path('orden/', create_order, name='create_order'),
+    path('getorden/<int:user_pk>', get_order, name='get_order'),
+    path('get_order_unit/<int:orden_pk>', get_order_unit, name='get_order_unit'),
 ]

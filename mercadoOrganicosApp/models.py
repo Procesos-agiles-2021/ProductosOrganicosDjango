@@ -57,6 +57,19 @@ class ClientProfile(models.Model):
         return f'Profile for user {self.name}'
 
 
+class Orden(models.Model):
+    fecha_compra = models.DateTimeField(verbose_name='Fecha de compra')
+    fecha_entrega = models.DateTimeField(verbose_name='Fecha de entrega')
+    direccion_entrega = models.CharField(max_length=400)
+    metodo_pago = models.CharField(max_length=200)
+    numero_tarjeta = models.CharField(max_length=200)
+    numero_cuota = models.IntegerField()
+    carrito = models.ForeignKey(Carrito, on_delete=models.PROTECT)
+
+    class Meta:
+        verbose_name_plural = "Ordenes"
+
+
 class ShoppingCartRequest:
     def __init__(self, shopping_cart_item, shopping_cart, purchase_item):
         self.shopping_cart_item = shopping_cart_item
