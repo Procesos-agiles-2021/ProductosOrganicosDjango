@@ -23,12 +23,12 @@ def sign_in(request):
     password = request.data.get('password', None)
     try:
         user, token = do_signup(request, username, password)
-        rol = rol_out(user)
+      #  rol = rol_out(user)
 
         return Response({
             'token': token,
             'data': UserSerializer(user).data,
-            'dataRol': rol.name,
+            #     'dataRol': rol.name,
         }, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_403_FORBIDDEN)
@@ -40,9 +40,9 @@ def sign_out(request):
     return Response(status=status.HTTP_200_OK)
 
 
-def rol_out(user):
-    cliente = ClientProfile.objects.get(user=user)
-    return cliente
+# def rol_out(user):
+#    cliente = ClientProfile.objects.get(user=user)
+#    return cliente
 
 
 @csrf_exempt
