@@ -64,8 +64,8 @@ class Orden(models.Model):
     ciudad_entrega = models.CharField(max_length=300)
     direccion_entrega = models.CharField(max_length=400)
     metodo_pago = models.CharField(max_length=200)
-    numero_tarjeta = models.CharField(max_length=200)
-    numero_cuota = models.IntegerField()
+    numero_tarjeta = models.CharField(max_length=200, blank=True, null=True)
+    numero_cuota = models.IntegerField(blank=True, null=True)
     carrito = models.ForeignKey(Carrito, on_delete=models.PROTECT)
 
     class Meta:
