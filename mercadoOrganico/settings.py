@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'django_nose',
-    'rest_framework_roles',
 ]
 
 REST_FRAMEWORK = {
@@ -55,10 +54,6 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',  # <-- And here
     ],
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
-}
-
-REST_FRAMEWORK_ROLES = {
-    'roles': 'mercadoOrganico.roles.ROLES',
 }
 
 MIDDLEWARE = [
@@ -101,9 +96,9 @@ WSGI_APPLICATION = 'mercadoOrganico.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'Devota',
-        'USER': 'postgres',
-        'PASSWORD': 'test',
+        'NAME': 'ProductosOrganicos2',
+        'USER': 'jdruedaa',
+        'PASSWORD': 'Abc123#',
         'HOST': 'localhost',
         'PORT': '',
     }
