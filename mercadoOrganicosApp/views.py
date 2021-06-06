@@ -166,13 +166,13 @@ def shopping_cart_item_update_delete(request, user_pk, item_pk):
         if request.method == 'DELETE':
             shopping_cart_item = get_shopping_cart_item(user_pk, item_pk)
             if shopping_cart_item.exists():
-                producto = Producto.objects.filter(itemid_id=item_pk)
+                producto = Producto.objects.filter(itemId=item_pk)
                 if producto.exists():
                     ofertas = Oferta.objects.filter(productoId=producto.values_list('id', flat=True).first()).order_by(
                         '-precioUnidad','cantidadRestante')
                     cantidadStock = 0
                     cantidadNueva = 0
-                    cant = shopping_cart_item.cantidad
+                    cant = shopping_cart_item.values_list('cantidad', flat=True).first()
                     for f in ofertas:
                         if cant > 0:
                             if cant + f.cantidadRestante <= f.cantidadOriginal:
