@@ -61,6 +61,7 @@ class ClientProfile(models.Model):
 class Oferta(models.Model):
     productoId = models.ForeignKey(Producto, on_delete=models.PROTECT)
     cantidadRestante = models.IntegerField()
+    cantidadOriginal = models.IntegerField()
     precioUnidad = models.FloatField()
 
 
